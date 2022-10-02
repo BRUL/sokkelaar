@@ -69,6 +69,8 @@ function init() {
 	const dLl = document.createElement("Label");
 	dLl.setAttribute("for","l");
 	dLl.innerText = "Lengte";
+	const dLd = document.createElement("fieldset");
+	dLd.append(dLl,dL);
 
 	const dW = document.createElement('input');
 	dW.setAttribute("type", "number");
@@ -78,6 +80,8 @@ function init() {
 	const dWl = document.createElement("Label");
 	dWl.setAttribute("for","w");
 	dWl.innerText = "Breedte";
+	const dWd = document.createElement("fieldset");
+	dWd.append(dWl,dW);
 
   const dH = document.createElement('input');
 	dH.setAttribute("type", "number");
@@ -87,6 +91,8 @@ function init() {
 	const dHl = document.createElement("Label");
 	dHl.setAttribute("for","h");
 	dHl.innerText = "Hoogte";
+	const dHd = document.createElement("fieldset");
+	dHd.append(dHl,dH);
 
 	const bttn = document.createElement('input');
 	bttn.setAttribute("type", "submit");
@@ -99,7 +105,7 @@ function init() {
 	displayData.setAttribute("class","table");
 	displayData.setAttribute("method","GET");
 
-	displayData.append(dLl,dL,dWl,dW,dHl,dH,bttn);
+	displayData.append(dLd,dWd,dHd,bttn);
 	document.body.appendChild(displayData);
 
 	cutlist.splice(0,0, ["Lengte","Breedte","Aantal"]);

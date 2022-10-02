@@ -1,17 +1,16 @@
 body {
   margin: 0;
   padding: 0;
+  background: #f0f0f0;
 }
 
 .app {
-
 }
 
-.app .model {
+.model {
   position: absolute;
   left: 0;
   top:0;
-  display: block;
   z-index: -1;
   width: 100vw;
   height: 100vh;
@@ -22,17 +21,29 @@ table, .table {
   border-collapse: collapse;
   border-style: hidden;
 }
+.data {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
 
 .table {
-  display: flex;
+  /* display: flex;
   flex-flow: row;
-  /* flex-wrap: wrap; */
-  align-content: flex-start;
+  flex-wrap: wrap;
+  align-content: flex-start; */
+  max-width: max(4rem,100vw);
 }
-.table label {
-  flex: 0 1;
+
+.table label, .table input {
+  margin: 0.5rem;
 }
-.table input {
+
+.table fieldset {
+  display: inline-grid;
+  grid-template: auto;
+  grid-auto-flow: column;
+  border: none;
 }
 
 table th, table td, .table input, .table label {
@@ -44,6 +55,7 @@ table th, table td, .table input, .table label {
   background: #fafafa;
   padding: 0.5rem 1rem;
   cursor: pointer;
+
 }
 .table input[type=submit]:hover
 {
@@ -61,5 +73,5 @@ table td, .table input {
 }
 
 input[type=number] {
-  width: 3rem;
+  width: 3@rem;
 }
