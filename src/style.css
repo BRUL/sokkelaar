@@ -47,7 +47,6 @@ table, .table {
 }
 
 table th, table td, .table input, .table label {
-  background: #fafafa33;
 	padding: 0.5rem;
 }
 .table input[type=submit]
@@ -70,6 +69,7 @@ table th, .table label {
 
 table td, .table input {
   border: none;
+  background: #fafafa33;
 }
 
 input[type=number] {

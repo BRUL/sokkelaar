@@ -38,7 +38,7 @@ function init() {
 	// Setting up camera
 	camera = new THREE.PerspectiveCamera( 44, 2, 1, 10000 );
 
-	const zf = 0.5; // Zoom factor
+	const zf = 1; // Zoom factor
 	camera.position.set(-(soccleLength/2)*zf, soccleLength*zf, soccleLength*2*zf);
 
 	// Set up renderer
