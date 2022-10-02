@@ -49,11 +49,11 @@ function init() {
 	resizeObserver.observe(renderer.domElement, {box: 'content-box'});
 
 	const controls = new OrbitControls( camera, renderer.domElement );
-					controls.screenSpacePanning = true;
+					controls.screenSpacePanning = false;
 					controls.addEventListener( 'change', render ); // use if there is no animation loop
 					controls.minDistance = 1000;
 					controls.maxDistance = 10000;
-					controls.enableZoom = false;
+					controls.enableZoom = true;
 					controls.update();
 
 	const soccle = createSoccle(soccleLength,soccleWidth,soccleHeight,soccleThickness);
