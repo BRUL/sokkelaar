@@ -1,3 +1,5 @@
+'use strict';
+
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { ColladaLoader } from 'three/examples/jsm/loaders/ColladaLoader';
@@ -64,7 +66,7 @@ function init() {
 	dL.setAttribute("id", "l");
 	dL.setAttribute("name", "l");
 	dL.setAttribute("value", soccleLength);
-	dLl = document.createElement("Label");
+	const dLl = document.createElement("Label");
 	dLl.setAttribute("for","l");
 	dLl.innerText = "Lengte";
 
@@ -73,7 +75,7 @@ function init() {
 	dW.setAttribute("id", "w");
 	dW.setAttribute("name", "w");
 	dW.setAttribute("value", soccleWidth);
-	dWl = document.createElement("Label");
+	const dWl = document.createElement("Label");
 	dWl.setAttribute("for","w");
 	dWl.innerText = "Breedte";
 
@@ -82,7 +84,7 @@ function init() {
 	dH.setAttribute("id", "h");
 	dH.setAttribute("name", "h");
 	dH.setAttribute("value", soccleHeight);
-	dHl = document.createElement("Label");
+	const dHl = document.createElement("Label");
 	dHl.setAttribute("for","h");
 	dHl.innerText = "Hoogte";
 
