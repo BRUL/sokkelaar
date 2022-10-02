@@ -108,8 +108,7 @@ function createSoccle(length, width, height, thickness, nailerWidth = 100, maxDi
 	gFront.position.z = thickness/2;
 	group.add( gFront );
 
-
-	gBack = gFront.clone();
+	const gBack = gFront.clone();
 	gBack.position.z = thickness/2 + width -thickness;
 	group.add( gBack );
 
