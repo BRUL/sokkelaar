@@ -61,5 +61,5 @@ table td, .table input {
 }
 
 input[type=number] {
-  width: 100%;
+  width: 3rem;
 }
