@@ -17,24 +17,49 @@ body {
   height: 100vh;
 }
 
-table {
-  background: transparant;
+table, .table {
   margin:20px;
-
   border-collapse: collapse;
   border-style: hidden;
 }
 
-table th, table td {
+.table {
+  display: flex;
+  flex-flow: row;
+  /* flex-wrap: wrap; */
+  align-content: flex-start;
+}
+.table label {
+  flex: 0 1;
+}
+.table input {
+}
+
+table th, table td, .table input, .table label {
   background: #fafafa33;
-  border: 0px solid #000;
-}
-
-table th {
-	padding: 0.5rem 1rem;
-  border-bottom: #000 1px solid;
-}
-
-table td {
 	padding: 0.5rem;
+}
+.table input[type=submit]
+{
+  background: #fafafa;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+.table input[type=submit]:hover
+{
+  background: #fff;
+  box-shadow: 5px 5px #000;
+}
+
+table th, .table label {
+  border-bottom: #000 1px solid;
+  font-weight: bold;
+}
+
+table td, .table input {
+  border: none;
+}
+
+input[type=number] {
+  width: 100%;
 }

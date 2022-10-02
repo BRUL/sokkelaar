@@ -51,19 +51,54 @@ function init() {
 					controls.addEventListener( 'change', render ); // use if there is no animation loop
 					controls.minDistance = 1000;
 					controls.maxDistance = 10000;
-					controls.enableZoom = true;
+					controls.enableZoom = false;
 					controls.update();
-
-
 
 	const soccle = createSoccle(soccleLength,soccleWidth,soccleHeight,soccleThickness);
 	scene.add(soccle);
 
-	const soccleData = [
-		["Lengte", "Breedte", "Hoogte"],
-		[soccleLength, soccleWidth, soccleHeight]
-	];
-	document.body.insertAdjacentHTML('beforeend', createTable(soccleData));
+	// input form
+
+	const dL = document.createElement('input');
+	dL.setAttribute("type", "number");
+	dL.setAttribute("id", "l");
+	dL.setAttribute("name", "l");
+	dL.setAttribute("value", soccleLength);
+	dLl = document.createElement("Label");
+	dLl.setAttribute("for","l");
+	dLl.innerText = "Lengte";
+
+	const dW = document.createElement('input');
+	dW.setAttribute("type", "number");
+	dW.setAttribute("id", "w");
+	dW.setAttribute("name", "w");
+	dW.setAttribute("value", soccleWidth);
+	dWl = document.createElement("Label");
+	dWl.setAttribute("for","w");
+	dWl.innerText = "Breedte";
+
+  const dH = document.createElement('input');
+	dH.setAttribute("type", "number");
+	dH.setAttribute("id", "h");
+	dH.setAttribute("name", "h");
+	dH.setAttribute("value", soccleHeight);
+	dHl = document.createElement("Label");
+	dHl.setAttribute("for","h");
+	dHl.innerText = "Hoogte";
+
+	const bttn = document.createElement('input');
+	bttn.setAttribute("type", "submit");
+	bttn.setAttribute("id", "go");
+	bttn.setAttribute("value", ">");
+
+	// display model data
+	const displayData = document.createElement("form");
+	displayData.setAttribute("id","dimensions");
+	displayData.setAttribute("class","table");
+	displayData.setAttribute("method","GET");
+
+	displayData.append(dLl,dL,dWl,dW,dHl,dH,bttn);
+	document.body.appendChild(displayData);
 
 	cutlist.splice(0,0, ["Lengte","Breedte","Aantal"]);
 	document.body.insertAdjacentHTML('beforeend', createTable(cutlist));
@@ -168,18 +203,19 @@ function createBody(data) {
   return data.map(row => `<tr>${getCells(row, 'td')}</tr>`).join('');
 }
 
-function createTable(tableData) {
-	console.table(tableData);
+function createTable(table, title = "") {
+	console.table(table);
 
   // Destructure the headings (first row) from
   // all the rows
-  const [headings, ...rows] = tableData;
+  const [headings, ...rows] = table;
 
   // Return some HTML that uses `getCells` to create
   // some headings, but also to create the rows
   // in the tbody.
   return `
-    <table>
+    <table class="data">
+		 	<caption>${title}</caption>
       <thead>${getCells(headings, 'th')}</thead>
       <tbody>${createBody(rows)}</tbody>
     </table>
