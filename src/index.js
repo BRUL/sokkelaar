@@ -59,9 +59,11 @@ function init() {
 	const soccle = createSoccle(soccleLength,soccleWidth,soccleHeight,soccleThickness);
 	scene.add(soccle);
 
-	document.querySelector(".data #length").innerHTML = soccleLength;
-	document.querySelector(".data #width").innerHTML = soccleWidth;
-	document.querySelector(".data #height").innerHTML = soccleHeight;
+	const soccleData = [
+		["Lengte", "Breedte", "Hoogte"],
+		[soccleLength, soccleWidth, soccleHeight]
+	];
+	document.body.insertAdjacentHTML('beforeend', createTable(soccleData));
 
 	cutlist.splice(0,0, ["Lengte","Breedte","Aantal"]);
 	document.body.insertAdjacentHTML('beforeend', createTable(cutlist));
