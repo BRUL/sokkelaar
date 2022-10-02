@@ -1,0 +1,14 @@
+{
+  "name": "threethree",
+  "version": "1.0.0",
+  "description": "",
+  "source": "src/index.html",
+  "scripts": {
+    "start": "parcel",
+    "build": "parcel build src/index.html"
+  },
+  "devDependencies": {
+    "parcel": "latest",
+    "three": "^0.144.0"
+  }
+}

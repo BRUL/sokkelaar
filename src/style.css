@@ -1,0 +1,40 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.app {
+
+}
+
+.app .model {
+  position: absolute;
+  left: 0;
+  top:0;
+  display: block;
+  z-index: -1;
+  width: 100vw;
+  height: 100vh;
+}
+
+table {
+  background: transparant;
+  margin:20px;
+
+  border-collapse: collapse;
+  border-style: hidden;
+}
+
+table th, table td {
+  background: #fafafa33;
+  border: 0px solid #000;
+}
+
+table th {
+	padding: 0.5rem 1rem;
+  border-bottom: #000 1px solid;
+}
+
+table td {
+	padding: 0.5rem;
+}
