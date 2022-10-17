@@ -110,10 +110,44 @@ function init() {
 
 	cutlist.splice(0,0, ["Lengte","Breedte","Aantal"]);
 	document.body.insertAdjacentHTML('beforeend', createTable(cutlist));
+
+
+	const copyLabel = document.createElement("Label");
+	copyLabel.setAttribute("for", "url");
+	copyLabel.setAttribute("id", "url-label");
+	copyLabel.innerText = "Delen";
+
+	let url = document.location.href;
+	const textArea = document.createElement("input");
+	textArea.setAttribute("class","copy");
+	textArea.setAttribute("id","url");
+	textArea.setAttribute("name","url");
+	textArea.setAttribute("type","url");
+	textArea.setAttribute("value",url);
+
+	const copyForm = document.createElement("form");
+	copyForm.setAttribute("class","table share");
+	copyForm.appendChild(copyLabel);
+	copyForm.appendChild(textArea);
+	document.body.appendChild(copyForm);
+
+
+	textArea.addEventListener("click", () => CopyToClipboard(url));
+	textArea.addEventListener("click", function() {textArea.focus(); textArea.select(); });
+	textArea.addEventListener("click", () => copyLabel.innerText = "Gekopiëerd!");
 }
 
 function render() {
     renderer.render(scene, camera)
+}
+
+function CopyToClipboard(url) {
+	navigator.clipboard.writeText(url).then(function() {
+	    console.log('Copied!');
+	}, function() {
+	    console.log('Copy error');
+	});
+	console.log(url);
 }
 
 function resizeCanvasToDisplaySize() {

@@ -27,6 +27,12 @@ table, .table {
   left: 0;
 }
 
+.share {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
 .table {
   /* display: flex;
   flex-flow: row;
@@ -35,31 +41,19 @@ table, .table {
   max-width: max(4rem,100vw);
 }
 
-.table label, .table input {
+.table label, input {
   margin: 0.5rem;
 }
 
-.table fieldset {
+.table fieldset, input {
   display: inline-grid;
   grid-template: auto;
   grid-auto-flow: column;
   border: none;
 }
 
-table th, table td, .table input, .table label {
+table th, table td, input, .table label {
 	padding: 0.5rem;
-}
-.table input[type=submit]
-{
-  background: #fafafa;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-
-}
-.table input[type=submit]:hover
-{
-  background: #fff;
-  box-shadow: 5px 5px #000;
 }
 
 table th, .table label {
@@ -69,9 +63,25 @@ table th, .table label {
 
 table td, .table input {
   border: none;
-  background: #fafafa33;
 }
 
-input[type=number] {
-  width: 3@rem;
+input {
+  width: 3rem;
+  background: #fafafa;
+}
+
+input[type=submit], input.copy
+{
+  background: #fff;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  box-shadow: 5px 5px #000;
+}
+
+input:hover {
+  background: #fafafa;
+}
+
+input:active {
+  box-shadow: 5px 5px #666;
 }
