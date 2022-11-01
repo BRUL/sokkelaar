@@ -7,6 +7,8 @@ import { ColladaLoader } from 'three/examples/jsm/loaders/ColladaLoader';
 let camera, scene, renderer, object;
 let cutlist;
 
+const defaultMaterial = new THREE.MeshLambertMaterial({ color: 0xaaaaaa });
+
 init();
 render();
 
@@ -20,10 +22,10 @@ function init() {
 	const URLHeight = urlParams.get('h');
 	const URLThickness = urlParams.get('t');
 
-	const soccleLength = parseInt(URLLength) || 800;
-	const soccleWidth = parseInt(URLWidth) || 500;
-	const soccleHeight = parseInt(URLHeight) || 95;
-	const soccleThickness = parseInt(URLThickness) || 18;
+	const modelLength = parseInt(URLLength) || 600;
+	const modelWidth = parseInt(URLWidth) || 500;
+	const modelHeight = parseInt(URLHeight) || 700;
+	const modelThickness = parseInt(URLThickness) || 18;
 
 	scene = new THREE.Scene();
 	scene.background = new THREE.Color( 0xf0f0f0 );
@@ -39,7 +41,10 @@ function init() {
 	camera = new THREE.PerspectiveCamera( 44, 2, 1, 10000 );
 
 	const zf = 1; // Zoom factor
-	camera.position.set(-(soccleLength/2)*zf, soccleLength*zf, soccleLength*2*zf);
+	//camera.position.set(-(soccleLength/2)*zf, soccleLength*zf, soccleLength*2*zf);
+	let distance = Math.max(Math.max(modelLength,modelWidth,modelHeight),100);
+	console.log(distance);
+	camera.position.set(-distance*zf, distance*2*zf, distance*3*zf);
 
 	// Set up renderer
 	renderer = new THREE.WebGLRenderer({ canvas: document.querySelector(".app canvas"), antialias: true });
@@ -49,23 +54,46 @@ function init() {
 	resizeObserver.observe(renderer.domElement, {box: 'content-box'});
 
 	const controls = new OrbitControls( camera, renderer.domElement );
-					controls.screenSpacePanning = false;
+					controls.target = new THREE.Vector3( 0, modelHeight/2, 0);
+					controls.screenSpacePanning = true;
 					controls.addEventListener( 'change', render ); // use if there is no animation loop
-					controls.minDistance = 1000;
+					controls.minDistance = 100;
 					controls.maxDistance = 10000;
 					controls.enableZoom = true;
 					controls.update();
 
-	const soccle = createSoccle(soccleLength,soccleWidth,soccleHeight,soccleThickness);
-	scene.add(soccle);
+	//const soccle = createSoccle(soccleLength,soccleWidth,soccleHeight,soccleThickness);
+	//scene.add(soccle);
+
+	const modelParameters = {
+		width: modelLength,
+		depth: modelWidth,
+		height: modelHeight
+	};
+
+	// loadModel
+	scene.add(loadModel(modelParameters));
 
 	// input form
+	document.body.appendChild(displayData(modelLength, modelWidth, modelHeight));
 
+	// Display cutlist data
+	// cutlist.splice(0,0, ["Lengte","Breedte","Aantal"]);
+	// document.body.insertAdjacentHTML('beforeend', createTable(cutlist));
+
+	// Display URL copier
+	document.body.appendChild(copyForm());
+
+	// const axesHelper = new THREE.AxesHelper( 100 );
+	// scene.add( axesHelper );
+}
+
+function displayData(modelLength, modelWidth, modelHeight) {
 	const dL = document.createElement('input');
 	dL.setAttribute("type", "number");
 	dL.setAttribute("id", "l");
 	dL.setAttribute("name", "l");
-	dL.setAttribute("value", soccleLength);
+	dL.setAttribute("value", modelLength);
 	const dLl = document.createElement("Label");
 	dLl.setAttribute("for","l");
 	dLl.innerText = "Lengte";
@@ -76,18 +104,18 @@ function init() {
 	dW.setAttribute("type", "number");
 	dW.setAttribute("id", "w");
 	dW.setAttribute("name", "w");
-	dW.setAttribute("value", soccleWidth);
+	dW.setAttribute("value", modelWidth);
 	const dWl = document.createElement("Label");
 	dWl.setAttribute("for","w");
 	dWl.innerText = "Breedte";
 	const dWd = document.createElement("fieldset");
 	dWd.append(dWl,dW);
 
-  const dH = document.createElement('input');
+	const dH = document.createElement('input');
 	dH.setAttribute("type", "number");
 	dH.setAttribute("id", "h");
 	dH.setAttribute("name", "h");
-	dH.setAttribute("value", soccleHeight);
+	dH.setAttribute("value", modelHeight);
 	const dHl = document.createElement("Label");
 	dHl.setAttribute("for","h");
 	dHl.innerText = "Hoogte";
@@ -104,50 +132,145 @@ function init() {
 	displayData.setAttribute("id","dimensions");
 	displayData.setAttribute("class","table");
 	displayData.setAttribute("method","GET");
-
 	displayData.append(dLd,dWd,dHd,bttn);
-	document.body.appendChild(displayData);
+	return displayData;
+}
 
-	cutlist.splice(0,0, ["Lengte","Breedte","Aantal"]);
-	document.body.insertAdjacentHTML('beforeend', createTable(cutlist));
+function loadModel( data ) {
 
+	data = Object.assign({
+		width: 100,
+		depth: 100,
+		height: 100,
+		thicknessCorpus: 18,
+		thicknessBack: 8,
+		backRabet: 6,
+		backInset: 20,
+		shelves: -1,
+		minShelveDistance: 300,
+		shelveSetback: 10,
+		material: defaultMaterial
+	}, data);
 
-	const copyLabel = document.createElement("Label");
-	copyLabel.setAttribute("for", "url");
-	copyLabel.setAttribute("id", "url-label");
-	copyLabel.innerText = "Delen";
+	console.table(data);
 
-	let url = document.location.href;
-	const textArea = document.createElement("input");
-	textArea.setAttribute("class","copy");
-	textArea.setAttribute("id","url");
-	textArea.setAttribute("name","url");
-	textArea.setAttribute("type","url");
-	textArea.setAttribute("value",url);
+	const group = new THREE.Group();
+	cutlist = [];
 
-	const copyForm = document.createElement("form");
-	copyForm.setAttribute("class","table share");
-	copyForm.appendChild(copyLabel);
-	copyForm.appendChild(textArea);
-	document.body.appendChild(copyForm);
+	group.translateX(-data.width / 2);
 
+	// Onderregel
+	group.add( newPartFromData({
+		x: data.width - (2 * data.thicknessCorpus),
+		y: data.thicknessCorpus,
+		z: data.depth,
+		px: data.thicknessCorpus
+	}));
 
-	textArea.addEventListener("click", () => CopyToClipboard(url));
-	textArea.addEventListener("click", function() {textArea.focus(); textArea.select(); });
-	textArea.addEventListener("click", () => copyLabel.innerText = "Gekopiëerd!");
+	// Bovenregel
+	group.add( newPartFromData({
+		x: data.width - (2 * data.thicknessCorpus),
+		y: data.thicknessCorpus,
+		z: data.depth,
+		px: data.thicknessCorpus,
+		py: data.height - data.thicknessCorpus
+	}));
+	// Linkerstijl
+	group.add( newPartFromData({
+		x: data.thicknessCorpus,
+		y: data.height,
+		z: data.depth
+	}));
+	// Rechterstijl
+	group.add( newPartFromData({
+		x: data.thicknessCorpus,
+		y: data.height,
+		z: data.depth,
+		px: data.width - data.thicknessCorpus
+	}));
+
+	// Rug
+	group.add( newPartFromData({
+		x: data.width - 2 * (data.thicknessCorpus - data.backRabet),
+		y: data.height - 2 * (data.thicknessCorpus - data.backRabet),
+		z: data.thicknessBack,
+		px: (data.thicknessCorpus - data.backRabet),
+		py: (data.thicknessCorpus - data.backRabet),
+		pz: data.backInset - data.thicknessBack
+	}));
+
+	// Legborden
+	let shelves = 0;
+	if(data.shelves < 0 && data.minShelveDistance > 0) {
+		// calculate amount of shelves
+		shelves = Math.floor((data.height - (2 * data.thicknessCorpus)) / data.minShelveDistance);
+		//console.log("Calculated shelves!", shelves);
+	}
+	if(data.shelves > 0) {
+		shelves = data.shelves;
+		//console.log("Determined shelves!", shelves);
+	}
+	if(shelves != 0) {
+		// draw shelves
+		for(let i = 1; i <= shelves; i++) {
+			let shelvePosY = data.thicknessCorpus + round(i * (data.height - (2 * data.thicknessCorpus)) / (shelves + 1), 2);
+			console.log("Shelve %s of %s at %s", i, shelves, shelvePosY);
+			group.add( newPartFromData({
+				x: data.width - (2 * data.thicknessCorpus),
+				y: data.thicknessCorpus,
+				z: data.depth-data.shelveSetback - data.backInset,
+				px: data.thicknessCorpus,
+				py: shelvePosY,
+				pz: data.backInset
+			}));
+		}
+	}
+
+	return group;
+}
+
+function newPart(x, y, z, posx, posy, posz, material) {
+	if(!x) console.warn("No x value for part given.", this.x);
+	if(!y) console.warn("No y value for part given.", this.y);
+	if(!z) console.warn("No z value for part given.", this.z);
+
+	const part = new THREE.Mesh(new THREE.BoxGeometry(x, y, z), (material ? material : new THREE.MeshLambertMaterial({ color: "#" + Math.floor(Math.random()*16777215).toString(16) })));
+
+	part.position.x = x/2 + (posx ? posx : 0);
+	part.position.y = y/2 + (posy ? posy : 0);
+	part.position.z = z/2 + (posz ? posz : 0);
+	return part;
+}
+
+//
+function newPartFromData(inputData) {
+	data = Object.assign({
+						x: 100,
+						y: 100,
+						z: 18,
+						px: 0,
+						py: 0,
+						pz: 0,
+						material: new THREE.MeshLambertMaterial({ color: "#aaaaaa" })
+					}, inputData);
+	if(!inputData.x || !inputData.y || !inputData.z) {
+		data.material = new THREE.MeshLambertMaterial({ color: "#ffaaaa" });
+	}
+	const part = newPart(data.x, data.y, data.z, data.px, data.py, data.pz, data.material);
+	return part;
 }
 
 function render() {
     renderer.render(scene, camera)
 }
 
-function CopyToClipboard(url) {
+function CopyToClipboard(url, feedbackElement = null) {
 	navigator.clipboard.writeText(url).then(function() {
-	    console.log('Copied!');
+		if(feedbackElement) {
+			feedbackElement.innerText = "Gekopiëerd!"
+		}
 	}, function() {
-	    console.log('Copy error');
 	});
-	console.log(url);
 }
 
 function resizeCanvasToDisplaySize() {
@@ -172,6 +295,33 @@ function resizeCanvasToDisplaySize() {
 	render();
   return needResize;
 
+}
+
+function copyForm() {
+
+	const copyLabel = document.createElement("Label");
+	copyLabel.setAttribute("for", "url");
+	copyLabel.setAttribute("id", "url-label");
+	copyLabel.innerText = "Delen";
+
+	let url = document.location.href;
+	const textArea = document.createElement("input");
+	textArea.setAttribute("class","copy");
+	textArea.setAttribute("id","url");
+	textArea.setAttribute("name","url");
+	textArea.setAttribute("type","url");
+	textArea.setAttribute("value",url);
+
+	const copyForm = document.createElement("form");
+	copyForm.setAttribute("class","table share");
+	copyForm.appendChild(copyLabel);
+	copyForm.appendChild(textArea);
+
+	// Interaction
+	textArea.addEventListener("click", () => CopyToClipboard(url, copyLabel));
+	textArea.addEventListener("click", function() {textArea.focus(); textArea.select(); });
+
+	return copyForm;
 }
 
 function createSoccle(length, width, height, thickness, nailerWidth = 100, maxDistance = 600){
@@ -246,8 +396,6 @@ function createBody(data) {
 }
 
 function createTable(table, title = "") {
-	console.table(table);
-
   // Destructure the headings (first row) from
   // all the rows
   const [headings, ...rows] = table;
@@ -262,4 +410,15 @@ function createTable(table, title = "") {
       <tbody>${createBody(rows)}</tbody>
     </table>
   `;
+}
+
+/**
+ * Round half away from zero ('commercial' rounding)
+ * Uses correction to offset floating-point inaccuracies.
+ * Works symmetrically for positive and negative numbers.
+ */
+function round(num, decimalPlaces = 0) {
+    var p = Math.pow(10, decimalPlaces);
+    var n = (num * p) * (1 + Number.EPSILON);
+    return Math.round(n) / p;
 }
