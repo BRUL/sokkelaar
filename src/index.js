@@ -244,7 +244,7 @@ function newPart(x, y, z, posx, posy, posz, material) {
 
 //
 function newPartFromData(inputData) {
-	data = Object.assign({
+	let data = Object.assign({
 						x: 100,
 						y: 100,
 						z: 18,
